@@ -1,12 +1,13 @@
 var song;
-var w;
 var fft;
 var histLowBass = [];
 var histBass = [];
 var histMid = [];
 var histTreble = [];
 var resolution = 512;
-var taille = 600;
+
+var w = window.innerWidth;
+var h = window.innerHeight;
 
 function preload() {
 	song = loadSound("data/immense mountain.mp3")
@@ -21,13 +22,11 @@ function clic() {
 }
 
 function setup() {
-	var canva = createCanvas(taille, taille);
+	var canva = createCanvas(w, h);
 	colorMode(HSB);
-	angleMode(DEGREES)
-	//song.play();
+	angleMode(DEGREES);
 	fft = new p5.FFT(0.7, resolution);
-	w = width / resolution;
-	canva.mousePressed(clic)
+	canva.mousePressed(clic);
 }
 
 function draw() {
@@ -44,6 +43,13 @@ function draw() {
 	noFill();
 	strokeWeight(1);
 
+	if (song.isPlaying() && touches.length == 1) {
+		song.pause();
+	}
+	if (!song.isPlaying() && touches.length == 1) {
+		song.play();
+	}
+
 	textAlign(LEFT, TOP);
 	textFont('Helvetica');
 	stroke('#00A6FB');
@@ -55,14 +61,12 @@ function draw() {
 		text('Play', 10, 10);
 	}
 
-	translate(width / 2, height / 2);
-
-	//console.log(histBass.length);
+	translate(w / 2, h / 2);
 
 	beginShape();
 	for (var i = 1; i < histLowBass.length; i++) {
 		stroke('#003554');
-		r = map(histLowBass[i], 0, 255, 10, height / 2);
+		r = map(histLowBass[i], 0, 255, 10, h / 2);
 		var x = r * cos(i);
 		var y = r * sin(i);
 		vertex(x, y);
@@ -98,4 +102,11 @@ function draw() {
 		vertex(x, y);
 	}
 	endShape()
+}
+
+window.onresize = function () {
+	// assigns new values for width and height variables
+	w = window.innerWidth;
+	h = window.innerHeight;
+	canvas.size(w, h);
 }
